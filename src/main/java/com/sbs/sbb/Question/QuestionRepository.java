@@ -6,5 +6,5 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
 
     Question findBySubject(String subject);
 
-    Question findBySubjectAndContent(String s, String content);
+    Question findBySubjectAndContent(String subject, String content);
 }
