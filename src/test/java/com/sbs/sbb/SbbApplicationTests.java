@@ -70,6 +70,7 @@ class SbbApplicationTests {
 		Answer a1 = answerService.create(q2, "네 자동으로 생성됩니다.", user2);
 
 		// 1번 질문에 2명의 회원이 추천을 한다.
+		// user1이 q1을 추천했다.
 		q1.addVoter(user1);
 		q1.addVoter(user2);
 		questionRepository.save(q1);

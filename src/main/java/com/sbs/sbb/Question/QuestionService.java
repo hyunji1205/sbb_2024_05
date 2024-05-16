@@ -20,11 +20,11 @@ public class QuestionService {
     private final QuestionRepository questionRepository;
 
     public List<Question> getList() {
-        return this.questionRepository.findAll();
+        return questionRepository.findAll();
     }
 
     public Question getQuestion(Integer id) {
-        Optional<Question> oq = this.questionRepository.findById(id);
+        Optional<Question> oq = questionRepository.findById(id);
 
         // oq.isPersent() == false
         // !oq.isPresent()
@@ -41,7 +41,7 @@ public class QuestionService {
         q.setCreateDate(LocalDateTime.now());
         q.setAuthor(user);
 
-        this.questionRepository.save(q);
+        questionRepository.save(q);
         return q;
     }
 
@@ -50,7 +50,7 @@ public class QuestionService {
         sorts.add(Sort.Order.desc("createDate"));
 
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
-        return this.questionRepository.findAll(pageable);
+        return questionRepository.findAll(pageable);
     }
 
     public void modify(Question question, String subject, String content) {
@@ -62,5 +62,10 @@ public class QuestionService {
 
     public void delete(Question question) {
         questionRepository.delete(question);
+    }
+
+    public void vote(Question question, SiteUser voter) {
+        question.addVoter(voter);
+        questionRepository.save(question);
     }
 }
