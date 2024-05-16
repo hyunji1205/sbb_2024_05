@@ -1,7 +1,6 @@
 package com.sbs.sbb.Answer;
 
 import com.sbs.sbb.Question.Question;
-import com.sbs.sbb.Question.QuestionRepository;
 import com.sbs.sbb.Question.QuestionService;
 import com.sbs.sbb.user.SiteUser;
 import com.sbs.sbb.user.UserService;
@@ -12,7 +11,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
