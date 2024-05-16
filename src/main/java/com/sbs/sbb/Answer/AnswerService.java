@@ -20,13 +20,13 @@ public class AnswerService {
         answer.setQuestion(q);
         answer.setCreateDate(LocalDateTime.now());
         answer.setAuthor(author);
-        this.answerRepository.save(answer);
+        answerRepository.save(answer);
 
         return answer;
     }
 
     public Answer getAnswer(Integer id) {
-        Optional<Answer> answer = this.answerRepository.findById(id);
+        Optional<Answer> answer = answerRepository.findById(id);
         if (answer.isPresent()) {
             return answer.get();
         }
@@ -43,5 +43,10 @@ public class AnswerService {
 
     public void delete(Answer answer) {
         answerRepository.delete(answer);
+    }
+
+    public void vote(Answer answer, SiteUser voter) {
+        answer.addVoter(voter);
+        answerRepository.save(answer);
     }
 }
