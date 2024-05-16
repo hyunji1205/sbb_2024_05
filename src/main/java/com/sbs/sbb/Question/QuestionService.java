@@ -41,10 +41,11 @@ public class QuestionService {
         Question q = new Question();
         q.setSubject(subject);
         q.setContent(content);
-        q.setCreateDate(LocalDateTime.now());
         q.setAuthor(user);
+        q.setCreateDate(LocalDateTime.now());
 
         questionRepository.save(q);
+
         return q;
     }
 
@@ -53,6 +54,11 @@ public class QuestionService {
         sorts.add(Sort.Order.desc("createDate"));
 
         Pageable pageable = PageRequest.of(page, 10, Sort.by(sorts));
+
+        if ( kw == null || kw.trim().length() == 0 ) {
+            return questionRepository.findAll(pageable);
+        }
+
         Specification<Question> spec = search(kw);
 
         return questionRepository.findAll(spec, pageable);
@@ -71,8 +77,10 @@ public class QuestionService {
 
     public void vote(Question question, SiteUser voter) {
         question.addVoter(voter);
+
         questionRepository.save(question);
     }
+
     private Specification<Question> search(String kw) {
         return new Specification<>() {
             private static final long serialVersionUID = 1L;

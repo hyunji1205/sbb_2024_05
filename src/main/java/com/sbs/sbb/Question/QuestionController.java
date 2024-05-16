@@ -25,8 +25,8 @@ public class QuestionController {
     private final UserService userService;
 
     @GetMapping("/list")
-    public String list(Model model, @RequestParam(value="page", defaultValue="0") int page) {
-        Page<Question> paging = this.questionService.getList(page, null);
+    public String list(Model model, @RequestParam(value="page", defaultValue="0") int page, @RequestParam(value = "kw", defaultValue = "") String kw) {
+        Page<Question> paging = this.questionService.getList(page, kw);
         model.addAttribute("paging", paging);
 
         return "question_list";
@@ -57,14 +57,18 @@ public class QuestionController {
     @PostMapping("/create")
     // QuestionForm 값을 바인딩 할 때 유효성 체크를 해라!
     // QuestionFrom 변수는 model.addAttribute 없이 바로 뷰에서 접근할 수 있다.
-    public String questionCreate(@Valid QuestionForm questionForm, BindingResult bindingResult, Principal principal) {
+    public String questionCreate(
+            @Valid QuestionForm questionForm,
+            BindingResult bindingResult,
+            Principal principal) {
+
         if ( bindingResult.hasErrors() ) {
             // question_form.html 실행
             // 다시 작성하라는 의미로 응답에 폼을 싫어서 보냄
             return "question_form";
         }
-        SiteUser siteUser = this.userService.getUser(principal.getName());
 
+        SiteUser siteUser = this.userService.getUser(principal.getName());
         Question q = this.questionService.create(questionForm.getSubject(), questionForm.getContent(), siteUser);
 
         return "redirect:/question/list";
@@ -77,11 +81,15 @@ public class QuestionController {
         if (bindingResult.hasErrors()) {
             return "question_form";
         }
+
         Question question = questionService.getQuestion(id);
+
         if (!question.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "수정권한이 없습니다.");
         }
+
         questionService.modify(question, questionForm.getSubject(), questionForm.getContent());
+
         return "redirect:/question/detail/%s".formatted(id);
     }
 
@@ -102,13 +110,17 @@ public class QuestionController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/delete/{id}")
     public String questionDelete(Principal principal, @PathVariable("id") Integer id) {
-        Question question = questionService.getQuestion(id);
+        Question question = this.questionService.getQuestion(id);
+
         if (!question.getAuthor().getUsername().equals(principal.getName())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
+
         questionService.delete(question);
+
         return "redirect:/";
     }
+
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/vote/{id}")
     public String questionVote(Principal principal, @PathVariable("id") Integer id) {
